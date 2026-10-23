@@ -1,14 +1,9 @@
-from __future__ import annotations
-
 from datetime import datetime
 from decimal import Decimal
-from typing import TYPE_CHECKING
 
+from sistem_bank_sampah_oop.jenis_sampah import JenisSampah
+from sistem_bank_sampah_oop.petugas import Petugas
 from sistem_bank_sampah_oop.status_setoran import StatusSetoran
-
-if TYPE_CHECKING:
-    from sistem_bank_sampah_oop.jenis_sampah import JenisSampah
-    from sistem_bank_sampah_oop.petugas import Petugas
 
 
 class SetoranSampah:
@@ -21,13 +16,33 @@ class SetoranSampah:
         petugas: Petugas,
         status: StatusSetoran = StatusSetoran.MENUNGGU,
     ):
-        self.id_setoran = id_setoran
-        self.jenis_sampah = jenis_sampah
-        self.berat_kg = berat_kg
-        self.tanggal = tanggal
-        self.petugas = petugas
-        self.status = status
-        self.alasan_penolakan: str | None = None
+        self._id_setoran = id_setoran
+        self._jenis_sampah = jenis_sampah
+        self._berat_kg = berat_kg
+        self._tanggal = tanggal
+        self._petugas = petugas
+        self._status = status
+        self._alasan_penolakan: str | None = None
+
+    @property
+    def berat_kg(self):
+        return self._berat_kg
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, status: StatusSetoran):
+        self._status = status
+
+    @property
+    def alasan_penolakan(self):
+        return self._alasan_penolakan
+
+    @alasan_penolakan.setter
+    def alasan_penolakan(self, alasan: str):
+        self._alasan_penolakan = alasan
 
     def hitung_berat(self) -> Decimal:
         return self.berat_kg
@@ -36,11 +51,11 @@ class SetoranSampah:
         self._pastikan_menunggu()
         self.status = StatusSetoran.DITERIMA
 
-    def tolak(self, alasan: str) -> None:
+    def tolak(self, alasan: str):
         self._pastikan_menunggu()
         self.alasan_penolakan = alasan
         self.status = StatusSetoran.DITOLAK
 
-    def _pastikan_menunggu(self) -> None:
+    def _pastikan_menunggu(self):
         if self.status is not StatusSetoran.MENUNGGU:
             raise ValueError("Hanya setoran berstatus MENUNGGU yang dapat diproses.")
